@@ -59,11 +59,13 @@ void dbs_check_cpu(struct dbs_data *dbs_data, int cpu)
 
 	if (dbs_data->cdata->governor == GOV_ONDEMAND)
 		ignore_nice = od_tuners->ignore_nice_load;
-		} else if (dbs_data->cdata->governor == GOV_ELEMENTALX) {
- 		sampling_rate = ex_tuners->sampling_rate;
- 		ignore_nice = ex_tuners->ignore_nice_load;	
+
 	else if (dbs_data->cdata->governor == GOV_HOTPLUG)
 		ignore_nice = hp_tuners->ignore_nice_load;
+			} else if (dbs_data->cdata->governor == GOV_ELEMENTALX) {
+ 		sampling_rate = ex_tuners->sampling_rate;
+ 		ignore_nice = ex_tuners->ignore_nice_load;	
+	
 	else
 		ignore_nice = cs_tuners->ignore_nice_load;
 
@@ -401,7 +403,7 @@ int cpufreq_governor_dbs(struct cpufreq_policy *policy,
   		ex_tuners = dbs_data->tuners;
   		ex_dbs_info = dbs_data->cdata->get_cpu_dbs_info_s(cpu);
   		sampling_rate = ex_tuners->sampling_rate;
- 		ignore_nice = ex_tuners->ignore_nice_load	
+ 		ignore_nice = ex_tuners->ignore_nice_load;	
 	} else if (dbs_data->cdata->governor == GOV_HOTPLUG) {
 		hp_tuners = dbs_data->tuners;
 		hp_dbs_info = dbs_data->cdata->get_cpu_dbs_info_s(cpu);
