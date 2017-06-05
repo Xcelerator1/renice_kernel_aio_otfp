@@ -59,6 +59,9 @@ void dbs_check_cpu(struct dbs_data *dbs_data, int cpu)
 
 	if (dbs_data->cdata->governor == GOV_ONDEMAND)
 		ignore_nice = od_tuners->ignore_nice_load;
+		} else if (dbs_data->cdata->governor == GOV_ELEMENTALX) {
+ 		sampling_rate = ex_tuners->sampling_rate;
+ 		ignore_nice = ex_tuners->ignore_nice_load;	
 	else if (dbs_data->cdata->governor == GOV_HOTPLUG)
 		ignore_nice = hp_tuners->ignore_nice_load;
 	else
@@ -231,6 +234,9 @@ static void set_sampling_rate(struct dbs_data *dbs_data,
 	} else if (dbs_data->cdata->governor == GOV_HOTPLUG) {
 		struct hp_dbs_tuners *hp_tuners = dbs_data->tuners;
 		hp_tuners->sampling_rate = sampling_rate;
+			} else if (dbs_data->cdata->governor == GOV_ELEMENTALX) {
+ 		struct ex_dbs_tuners *ex_tuners = dbs_data->tuners;
+ 		ex_tuners->sampling_rate = sampling_rate;
 	} else {
 		struct od_dbs_tuners *od_tuners = dbs_data->tuners;
 		od_tuners->sampling_rate = sampling_rate;
@@ -244,11 +250,13 @@ int cpufreq_governor_dbs(struct cpufreq_policy *policy,
 	struct od_cpu_dbs_info_s *od_dbs_info = NULL;
 	struct hp_cpu_dbs_info_s *hp_dbs_info = NULL;
 	struct cs_cpu_dbs_info_s *cs_dbs_info = NULL;
+	struct ex_cpu_dbs_info_s *ex_dbs_info = NULL;
 	struct od_ops *od_ops = NULL;
 	struct hp_ops *hp_ops = NULL;
 	struct od_dbs_tuners *od_tuners = NULL;
 	struct hp_dbs_tuners *hp_tuners = NULL;
 	struct cs_dbs_tuners *cs_tuners = NULL;
+		struct ex_dbs_tuners *ex_tuners = NULL;
 	struct cpu_dbs_common_info *cpu_cdbs;
 	unsigned int sampling_rate, latency, ignore_nice, j, cpu = policy->cpu;
 	int io_busy = 0;
