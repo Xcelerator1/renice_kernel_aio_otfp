@@ -290,6 +290,11 @@ int cpufreq_governor_dbs(struct cpufreq_policy *policy,
 		dbs_data->usage_count = 1;
 		rc = cdata->init(dbs_data);
 
+			  		if (cdata->governor == GOV_ELEMENTALX)
+  			rc = cdata->init_ex(dbs_data, policy);
+  		else
+  			rc = cdata->init(dbs_data);
+			
 		if (rc) {
 			pr_err("%s: POLICY_INIT: init() failed\n", __func__);
 			kfree(dbs_data);
@@ -392,6 +397,11 @@ int cpufreq_governor_dbs(struct cpufreq_policy *policy,
 		cs_dbs_info = dbs_data->cdata->get_cpu_dbs_info_s(cpu);
 		sampling_rate = cs_tuners->sampling_rate;
 		ignore_nice = cs_tuners->ignore_nice_load;
+		        } else if (dbs_data->cdata->governor == GOV_ELEMENTALX) {
+  		ex_tuners = dbs_data->tuners;
+  		ex_dbs_info = dbs_data->cdata->get_cpu_dbs_info_s(cpu);
+  		sampling_rate = ex_tuners->sampling_rate;
+ 		ignore_nice = ex_tuners->ignore_nice_load	
 	} else if (dbs_data->cdata->governor == GOV_HOTPLUG) {
 		hp_tuners = dbs_data->tuners;
 		hp_dbs_info = dbs_data->cdata->get_cpu_dbs_info_s(cpu);
@@ -443,6 +453,9 @@ int cpufreq_governor_dbs(struct cpufreq_policy *policy,
 			cs_dbs_info->down_skip = 0;
 			cs_dbs_info->enable = 1;
 			cs_dbs_info->requested_freq = policy->cur;
+		} else if (dbs_data->cdata->governor == GOV_ELEMENTALX) {
+  			ex_dbs_info->down_floor = 0;
+  			ex_dbs_info->enable = 1;
 		} else if (dbs_data->cdata->governor == GOV_HOTPLUG) {
 			hp_dbs_info->rate_mult = 1;
 			hp_dbs_info->sample_type = HP_NORMAL_SAMPLE;
@@ -465,7 +478,9 @@ int cpufreq_governor_dbs(struct cpufreq_policy *policy,
 	case CPUFREQ_GOV_STOP:
 		if (dbs_data->cdata->governor == GOV_CONSERVATIVE)
 			cs_dbs_info->enable = 0;
-
+                if (dbs_data->cdata->governor == GOV_ELEMENTALX)
+  			ex_dbs_info->enable = 0;			
+			
 		gov_cancel_work(dbs_data, policy);
 
 		if (dbs_data->cdata->governor != GOV_HOTPLUG) { // <-XXX
