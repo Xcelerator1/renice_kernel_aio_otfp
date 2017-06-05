@@ -43,6 +43,7 @@ void dbs_check_cpu(struct dbs_data *dbs_data, int cpu)
 	struct od_dbs_tuners *od_tuners = dbs_data->tuners;
 	struct hp_dbs_tuners *hp_tuners = dbs_data->tuners;
 	struct cs_dbs_tuners *cs_tuners = dbs_data->tuners;
+		struct ex_dbs_tuners *ex_tuners = dbs_data->tuners;
 	struct cpufreq_policy *policy;
 	int freq_avg;
 	unsigned int max_load = 0;
